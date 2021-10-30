@@ -198,8 +198,8 @@ void myfree(void* block) {
 /* Get the number of contiguous areas of free space in memory. */
 int mem_holes() {
     if (head == NULL) {
-        printf("Memory in not initialized")
-        return;
+        printf("Memory in not initialized");
+        return 0;
     }
     struct MemoryList *curr = head;
     int counter = 0;
@@ -218,8 +218,8 @@ int mem_holes() {
 int mem_allocated() {
 
     if (head == NULL) {
-        printf("Memory in not initialized")
-        return;
+        printf("Memory in not initialized");
+        return 0;
     }
     struct MemoryList *curr = head;
     int counter = 0;
@@ -238,8 +238,8 @@ int mem_allocated() {
 int mem_free() {
 
     if (head == NULL) {
-        printf("Memory in not initialized")
-        return;
+        printf("Memory in not initialized");
+        return 0;
     }
     struct MemoryList *curr = head;
     int size = 0;
@@ -255,8 +255,8 @@ int mem_free() {
 /* Number of bytes in the largest contiguous area of unallocated memory */
 int mem_largest_free() {
     if (head == NULL) {
-        printf("Memory in not initialized")
-        return;
+        printf("Memory in not initialized");
+        return 0;
     }
 
     struct MemoryList *current = head;
@@ -275,10 +275,25 @@ int mem_largest_free() {
 }
 
 /* Number of free blocks smaller than "size" bytes. */
-int mem_small_free(int size)
-{
-	return 0;
-}       
+int mem_small_free(int size) {
+    if (head == NULL) {
+        printf("Memory is not initialized");
+        return 0;
+    }
+
+    struct MemoryList *current = head;
+    int counter = 0;
+    while (current != NULL) {
+        if (current->alloc == 0) {
+            if (current->size < size){
+                counter++;
+            }
+        }
+        current = current->next;
+    }
+
+    return counter;
+}
 
 char mem_is_alloc(void *ptr)
 {

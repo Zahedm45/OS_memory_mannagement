@@ -235,9 +235,21 @@ int mem_allocated() {
 }
 
 /* Number of non-allocated bytes */
-int mem_free()
-{
-	return 0;
+int mem_free() {
+
+    if (head == NULL) {
+        printf("Memory in not initialized")
+        return;
+    }
+    struct MemoryList *curr = head;
+    int size = 0;
+    while (curr != NULL) {
+        if (curr->alloc == 0) {
+            size += curr->size;
+        }
+        curr = curr->next;
+    }
+    return size;
 }
 
 /* Number of bytes in the largest contiguous area of unallocated memory */

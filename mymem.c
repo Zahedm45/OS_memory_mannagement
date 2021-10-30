@@ -215,9 +215,23 @@ int mem_holes() {
 }
 
 /* Get the number of bytes allocated */
-int mem_allocated()
-{
-	return 0;
+int mem_allocated() {
+
+    if (head == NULL) {
+        printf("Memory in not initialized")
+        return;
+    }
+    struct MemoryList *curr = head;
+    int counter = 0;
+    while (curr != NULL) {
+        if (curr->alloc == 1) {
+            counter++;
+        }
+
+        curr = curr->next;
+    }
+
+    return counter;
 }
 
 /* Number of non-allocated bytes */

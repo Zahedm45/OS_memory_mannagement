@@ -10,11 +10,11 @@
  * You may change this to fit your implementation.
  */
 
-struct memoryList
+struct MemoryList
 {
   // doubly-linked list
-  struct memoryList *last;
-  struct memoryList *next;
+  struct MemoryList *previous;
+  struct MemoryList *next;
 
   int size;            // How many bytes in this block?
   char alloc;          // 1 if this block is allocated,
@@ -28,8 +28,8 @@ strategies myStrategy = NotSet;    // Current strategy
 size_t mySize;
 void *myMemory = NULL;
 
-static struct memoryList *head;
-static struct memoryList *next;
+static struct MemoryList *head;
+static struct MemoryList *next;
 
 
 /* initmem must be called prior to mymalloc and myfree.
@@ -57,11 +57,25 @@ void initmem(strategies strategy, size_t sz)
 
 	/* TODO: release any other memory you were using for bookkeeping when doing a re-initialization! */
 
+    if (head != NULL) {
+        struct MemoryList *trav;
+        for (trav = head; trav->next != NULL; trav = trav->next) {
+            free(trav->previous);
+            free(trav);
+        }
+    }
+
 
 	myMemory = malloc(sz);
 	
 	/* TODO: Initialize memory management structure. */
 
+    head = (struct MemoryList*) malloc(sizeof (struct MemoryList));
+    head->previous = NULL;
+    head->next = NULL;
+    head->size = sz;
+    head->alloc = 0;
+    head->ptr = myMemory;
 
 }
 
@@ -71,12 +85,11 @@ void initmem(strategies strategy, size_t sz)
  *  Restriction: requested >= 1 
  */
 
-void *mymalloc(size_t requested)
-{
+void *mymalloc(size_t requested) {
+
 	assert((int)myStrategy > 0);
 	
-	switch (myStrategy)
-	  {
+	switch (myStrategy) {
 	  case NotSet: 
 	            return NULL;
 	  case First:
@@ -87,16 +100,97 @@ void *mymalloc(size_t requested)
 	            return NULL;
 	  case Next:
 	            return NULL;
-	  }
+	}
+
+
+
+    if (head != NULL) {
+       // static struct MemoryList *head;
+        struct MemoryList *currentNode;
+
+
+        for (currentNode = head; currentNode->next != NULL; currentNode = currentNode->next) {
+
+            if ((currentNode->alloc != 1) && (currentNode->size > requested)) {
+                struct MemoryList *restMem =(struct MemoryList*)malloc(sizeof(struct MemoryList));
+
+                restMem->size = currentNode->size - requested;
+                restMem->alloc = 0;
+                restMem->ptr = currentNode->ptr + requested;
+
+                if (currentNode->next == NULL) {
+                    restMem->next = NULL;
+                } else {
+                    restMem->next = currentNode->next;
+                    currentNode->next->previous = restMem;
+                }
+
+                currentNode->next = restMem;
+                restMem->previous = currentNode;
+
+                currentNode->alloc = 1;
+                currentNode->size = requested;
+                return currentNode->ptr;
+
+//                restMem->previous = currentNode;                              // assigning the current node to previous node of the temporary node(restMem)
+//                restMem->next = currentNode->next;
+
+//                if (restMem->next != NULL) {
+//                    currentNode->next = restMem;
+//                    restMem->next->previous = restMem;
+//                }
+//                restMem->size = requested;
+//                restMem->ptr = currentNode->ptr + requested;
+//                restMem->alloc = 1;
+            }
+        }
+    }
 	return NULL;
 }
 
 
 /* Frees a block of memory previously allocated by mymalloc. */
-void myfree(void* block)
-{
-	return;
+void myfree(void* block) {
+
+    struct MemoryList *trav = head;
+    while (trav != NULL) {
+
+        if (trav == block) {
+            trav->alloc = 0;
+
+            if ( (trav->previous != NULL) && (trav->previous->alloc == 0)) {      // It is not the tail and is not allocated.
+
+            }
+
+        }
+
+
+
+        trav = trav->next;
+    }
+
+    return;
 }
+
+
+
+//
+//if ((trav->previous != NULL) && (trav->previous->alloc == 0)) {
+//trav->previous->size += trav->size;
+//
+//struct MemoryList *temp = (struct MemoryList *) malloc(sizeof(struct MemoryList));
+//temp = trav;
+//
+//if (trav->next == NULL) {
+//trav->next->ptr
+//}
+//
+//}
+
+
+
+
+
 
 /****** Memory status/property functions ******
  * Implement these functions.
@@ -208,8 +302,22 @@ strategies strategyFromString(char * strategy)
  */
 
 /* Use this function to print out the current contents of memory. */
-void print_memory()
-{
+void print_memory() {
+
+
+    struct MemoryList *temp = head;
+
+    if (head == NULL){
+        printf("Node is empty\n");
+        return;
+    }
+
+    printf("Hello, World\n");
+    while (temp != NULL) {
+        printf("%d ", temp->size);
+        temp = temp->next;
+    }
+
 	return;
 }
 
@@ -240,17 +348,22 @@ void try_mymem(int argc, char **argv) {
 	/* A simple example.  
 	   Each algorithm should produce a different layout. */
 	
-	initmem(strat,500);
-	
-	a = mymalloc(100);
-	b = mymalloc(100);
-	c = mymalloc(100);
-	myfree(b);
-	d = mymalloc(50);
-	myfree(a);
-	e = mymalloc(25);
-	
-	print_memory();
+
+//
+//	a = mymalloc(100);
+//	b = mymalloc(100);
+//	c = mymalloc(100);
+//	myfree(b);
+//	d = mymalloc(50);
+//	myfree(a);
+//	e = mymalloc(25);
+//
 	print_memory_status();
 	
+}
+
+int main () {
+    initmem(strat,500);
+    print_memory();
+
 }

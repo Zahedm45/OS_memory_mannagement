@@ -158,36 +158,34 @@ void myfree(void* block) {
         if (trav == block) {
             trav->alloc = 0;
 
-            if ( (trav->previous != NULL) && (trav->previous->alloc == 0)) {      // It is not the tail and is not allocated.
+            // if previous block is free
+            if ( (trav->previous != NULL) && (trav->previous->alloc == 0)) {      // It is not the head and not allocated.
+                trav->previous->size += trav->size;                                 // two empty memory blocks become one block
 
+                struct MemoryList *temp = trav;
+                if (temp->next != NULL) {                                       // not tail
+                    temp->previous->next = temp->next;
+                    temp->next->previous = temp->previous;
+                    free(temp);
+                }
             }
 
+            // if next block is also free, become one block
+            if ((trav->next != NULL) && (trav->next->alloc == 0)) {
+                trav->previous->size += trav->size;
+
+                struct MemoryList *temp = trav;
+                if (temp->previous != NULL) {
+                    temp->previous->next = temp;
+                    temp->next->previous = temp->previous;
+                    free(temp);
+                }
+            }
         }
-
-
-
-        trav = trav->next;
     }
 
     return;
 }
-
-
-
-//
-//if ((trav->previous != NULL) && (trav->previous->alloc == 0)) {
-//trav->previous->size += trav->size;
-//
-//struct MemoryList *temp = (struct MemoryList *) malloc(sizeof(struct MemoryList));
-//temp = trav;
-//
-//if (trav->next == NULL) {
-//trav->next->ptr
-//}
-//
-//}
-
-
 
 
 

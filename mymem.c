@@ -105,7 +105,6 @@ void *mymalloc(size_t requested) {
 
 
     if (head != NULL) {
-       // static struct MemoryList *head;
         struct MemoryList *currentNode;
 
 
@@ -197,9 +196,19 @@ void myfree(void* block) {
  */
 
 /* Get the number of contiguous areas of free space in memory. */
-int mem_holes()
-{
-	return 0;
+int mem_holes() {
+    if (head == NULL) {
+        printf("Memory in not initialized")
+        return;
+    }
+    struct MemoryList *current = head;
+    int counter = 0;
+    while (current != NULL) {
+        current = current->next;
+        counter++;
+    }
+
+	return counter;
 }
 
 /* Get the number of bytes allocated */
@@ -347,21 +356,21 @@ void try_mymem(int argc, char **argv) {
 	   Each algorithm should produce a different layout. */
 	
 
-//
-//	a = mymalloc(100);
-//	b = mymalloc(100);
-//	c = mymalloc(100);
-//	myfree(b);
-//	d = mymalloc(50);
-//	myfree(a);
-//	e = mymalloc(25);
-//
+
+	a = mymalloc(100);
+	b = mymalloc(100);
+	c = mymalloc(100);
+	myfree(b);
+	d = mymalloc(50);
+	myfree(a);
+	e = mymalloc(25);
+
 	print_memory_status();
 	
 }
 
-int main () {
-    initmem(strat,500);
-    print_memory();
-
-}
+//int main () {
+//    initmem(strat,500);
+//    print_memory();
+//
+//}

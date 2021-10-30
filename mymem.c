@@ -201,11 +201,14 @@ int mem_holes() {
         printf("Memory in not initialized")
         return;
     }
-    struct MemoryList *current = head;
+    struct MemoryList *curr = head;
     int counter = 0;
-    while (current != NULL) {
-        current = current->next;
-        counter++;
+    while (curr != NULL) {
+        if (curr->alloc == 0) {
+            counter++;
+        }
+
+        curr = curr->next;
     }
 
 	return counter;

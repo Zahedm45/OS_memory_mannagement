@@ -253,9 +253,25 @@ int mem_free() {
 }
 
 /* Number of bytes in the largest contiguous area of unallocated memory */
-int mem_largest_free()
-{
-	return 0;
+int mem_largest_free() {
+    if (head == NULL) {
+        printf("Memory in not initialized")
+        return;
+    }
+
+    struct MemoryList *current = head;
+    int size = 0;
+
+    while (current != NULL) {
+        if (current->alloc == 0) {
+            if (current->size > size){
+                size = current->size;
+            }
+        }
+        current = current->next;
+    }
+
+	return size;
 }
 
 /* Number of free blocks smaller than "size" bytes. */

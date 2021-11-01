@@ -96,8 +96,6 @@ void do_randomized_test(int strategyToUse, int totalSize, float fillRatio, int m
                 pointers[chosen] = pointers[storedPointers-1];
 
                 storedPointers--;
-
-                printf(" %d ", chosen);
                 myfree(pointer);
             }
 

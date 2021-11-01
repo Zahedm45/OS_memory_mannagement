@@ -152,10 +152,6 @@ int do_stress_tests(int argc, char **argv)
     do_randomized_test(strategy,10000,0.25,1,5000,10000);
 
 
-
-
-
-
     do_randomized_test(strategy,10000,0.5,1,1000,10000);
     do_randomized_test(strategy,10000,0.5,1,2000,10000);
     do_randomized_test(strategy,10000,0.5,1000,2000,10000);
@@ -170,8 +166,6 @@ int do_stress_tests(int argc, char **argv)
     do_randomized_test(strategy,10000,0.75,1,2000,10000);
 
     do_randomized_test(strategy,10000,0.9,1,500,10000);
-
-    printf(" \nFully done ");
 
     return 0; /* you nominally pass for surviving without segfaulting */
 }

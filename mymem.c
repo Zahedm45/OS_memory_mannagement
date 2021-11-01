@@ -31,8 +31,9 @@ void *myMemory = NULL;
 static struct MemoryList *head;
 static struct MemoryList *next;
 
-//truct MemoryList* worst_fit(size_t requested);
+struct MemoryList* worst_fit(size_t requested);
 struct MemoryList* first_fit(size_t requested);
+
 
 
 
@@ -63,30 +64,6 @@ struct MemoryList* first_fit(size_t requested);
 //}
 
 
-struct MemoryList* worst_fit(size_t requested) {
-
-     if (head == NULL) {return NULL;}
-
-    int size = 0;
-    struct MemoryList *currentNode = head;
-    struct MemoryList *largestNode = NULL;
-
-
-    while (currentNode != NULL) {
-        if ((currentNode->alloc != '1') && (currentNode->size >= requested)) {
-
-            if ( (currentNode->size > size) ) {
-                largestNode = currentNode;
-                size = currentNode->size;
-            }
-
-
-        }
-        currentNode = currentNode->next;
-    }
-
-    return largestNode;
-}
 
 
 /* initmem must be called prior to mymalloc and myfree.
@@ -274,6 +251,31 @@ struct MemoryList* first_fit(size_t requested) {
         }
     }
     return NULL;
+}
+
+struct MemoryList* worst_fit(size_t requested) {
+
+    if (head == NULL) {return NULL;}
+
+    int size = 0;
+    struct MemoryList *currentNode = head;
+    struct MemoryList *largestNode = NULL;
+
+
+    while (currentNode != NULL) {
+        if ((currentNode->alloc != '1') && (currentNode->size >= requested)) {
+
+            if ( (currentNode->size > size) ) {
+                largestNode = currentNode;
+                size = currentNode->size;
+            }
+
+
+        }
+        currentNode = currentNode->next;
+    }
+
+    return largestNode;
 }
 
 
@@ -558,6 +560,7 @@ void print_memory_status()
 	printf("%d bytes are free in %d holes; maximum allocatable block is %d bytes.\n",mem_free(),mem_holes(),mem_largest_free());
 	printf("Average hole size is %f.\n\n",((float)mem_free())/mem_holes());
 }
+
 
 /* Use this function to see what happens when your malloc and free
  * implementations are called.  Run "mem -try <args>" to call this function.

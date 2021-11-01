@@ -31,6 +31,10 @@ void *myMemory = NULL;
 static struct MemoryList *head;
 static struct MemoryList *next;
 
+struct MemoryList* worst_fit();
+struct MemoryList* first_fit();
+
+
 
 /* initmem must be called prior to mymalloc and myfree.
 
@@ -93,61 +97,74 @@ void initmem(strategies strategy, size_t sz) {
 void *mymalloc(size_t requested) {
 
     assert((int)myStrategy > 0);
+    struct MemoryList *allocMem;
 
-//    switch (myStrategy) {
-//        case NotSet:
-//            return NULL;
-//        case First:
-//            return NULL;
-//        case Best:
-//            return NULL;
-//        case Worst:
-//            return NULL;
-//        case Next:
-//            return NULL;
-//    }
-
-
-    if (head != NULL) {
-        struct MemoryList *currentNode;
+    switch (myStrategy) {
+        case NotSet:
+            return NULL;
+        case First:
+            allocMem = first_fit();
+        case Best:
+            return NULL;
+        case Worst:
+            return NULL;
+        case Next:
+            return NULL;
+    }
 
 
-        for (currentNode = head; currentNode != NULL; currentNode = currentNode->next) {
+    if (allocMem != NULL) {
 
-            if ((currentNode->alloc != '1') && (currentNode->size > requested)) {
-                struct MemoryList *restMem =(struct MemoryList*)malloc(sizeof(struct MemoryList));
+        struct MemoryList *restMem = (struct MemoryList *) malloc(sizeof(struct MemoryList));
 
-                restMem->size = currentNode->size - requested;
-                restMem->alloc = '0';
-                restMem->ptr = currentNode->ptr + requested;
+        restMem->size = allocMem->size - requested;
+        restMem->alloc = '0';
+        restMem->ptr = allocMem->ptr + requested;
 
-                // tail
-                if (currentNode->next == NULL) {
-                    restMem->next = NULL;
+        // tail
+        if (allocMem->next == NULL) {
+            restMem->next = NULL;
 
-                } else {
-                    restMem->next = currentNode->next;
-                    currentNode->next->previous = restMem;
-                }
-
-                currentNode->next = restMem;
-                restMem->previous = currentNode;
-
-                currentNode->alloc = '1';
-                currentNode->size = requested;
-                return currentNode->ptr;
-            }
-
-            if ((currentNode->alloc != '1') && (currentNode->size == requested)) {
-                currentNode->alloc = '1';
-               return currentNode->ptr;
-            }
+        } else {
+            restMem->next = allocMem->next;
+            allocMem->next->previous = restMem;
         }
+
+        allocMem->next = restMem;
+        restMem->previous = allocMem;
+
+        allocMem->alloc = '1';
+        allocMem->size = requested;
+        return allocMem->ptr;
+
+
+
     }
     return NULL;
 }
 
 
+
+
+struct MemoryList* first_fit(size_t requested) {
+
+    if (head != NULL) {
+        struct MemoryList *currentNode = head;
+
+        while (currentNode != NULL) {
+            if ((currentNode->alloc != '1') && (currentNode->size > requested)) {
+                return currentNode;
+
+            }
+
+            if ((currentNode->alloc != '1') && (currentNode->size == requested)) {
+                return currentNode;
+            }
+            currentNode = currentNode->next;
+        }
+    }
+    return NULL;
+}
 
 
 /* Frees a block of memory previously allocated by mymalloc. */

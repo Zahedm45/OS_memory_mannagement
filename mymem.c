@@ -31,9 +31,62 @@ void *myMemory = NULL;
 static struct MemoryList *head;
 static struct MemoryList *next;
 
-struct MemoryList* worst_fit();
-struct MemoryList* first_fit();
+//truct MemoryList* worst_fit(size_t requested);
+struct MemoryList* first_fit(size_t requested);
 
+
+
+//struct MemoryList* worst_fit(size_t requested) {
+//
+//    if (head == NULL) {return NULL;}
+//
+//    int size = 0;
+//    struct MemoryList *currentNode = head;
+//    struct MemoryList *largestNode;
+//
+//
+//    while (currentNode != NULL) {
+//        if ((currentNode->alloc != '1') && (currentNode->size > requested)) {
+//
+//            if ( (currentNode->size > size) ) {
+//                largestNode = currentNode;
+//                size = currentNode->size;
+//
+//            }
+//
+//
+//        }
+//        currentNode = currentNode->next;
+//    }
+//
+//    return largestNode;
+//}
+
+
+struct MemoryList* worst_fit(size_t requested) {
+
+    if (head == NULL) {return NULL;}
+
+    int size = 0;
+    struct MemoryList *currentNode = head;
+    struct MemoryList *largestNode;
+
+
+    while (currentNode != NULL) {
+        if ((currentNode->alloc != '1') && (currentNode->size >= requested)) {
+
+            if ( (currentNode->size > size) ) {
+                largestNode = currentNode;
+                size = currentNode->size;
+            }
+
+
+        }
+        currentNode = currentNode->next;
+    }
+
+    return largestNode;
+}
 
 
 /* initmem must be called prior to mymalloc and myfree.
@@ -94,26 +147,86 @@ void initmem(strategies strategy, size_t sz) {
  *  Restriction: requested >= 1 
  */
 
+//void *mymalloc(size_t requested) {
+//
+//    assert((int)myStrategy > 0);
+//    struct MemoryList *currentNode = worst_fit(requested);
+//
+////    switch (myStrategy) {
+////        case NotSet:
+////            return NULL;
+////        case First:
+////            currentNode = first_fit(requested);
+////            break;
+////        case Best:
+////            return NULL;
+////        case Worst:
+////            currentNode = worst_fit(requested);
+////            break;
+////        case Next:
+////            return NULL;
+////    }
+//
+//
+//
+//    if (currentNode == NULL) {return NULL;}
+//
+//
+//
+//    if ((currentNode->alloc != '1') && (currentNode->size > requested)) {
+//        struct MemoryList *restMem =(struct MemoryList*)malloc(sizeof(struct MemoryList));
+//
+//        restMem->size = currentNode->size - requested;
+//        restMem->alloc = '0';
+//        restMem->ptr = currentNode->ptr + requested;
+//
+//        // tail
+//        if (currentNode->next == NULL) {
+//            restMem->next = NULL;
+//
+//        } else {
+//            restMem->next = currentNode->next;
+//            currentNode->next->previous = restMem;
+//        }
+//
+//        currentNode->next = restMem;
+//        restMem->previous = currentNode;
+//
+//        currentNode->alloc = '1';
+//        currentNode->size = requested;
+//        return currentNode->ptr;
+//
+//    } else  {
+//        currentNode->alloc = '1';
+//        return currentNode->ptr;
+//    }
+//    return NULL;
+//}
+
 void *mymalloc(size_t requested) {
 
     assert((int)myStrategy > 0);
-    struct MemoryList *currentNode = first_fit();
+    struct MemoryList *currentNode = worst_fit(requested);
 
 //    switch (myStrategy) {
 //        case NotSet:
 //            return NULL;
 //        case First:
-//            allocMem = first_fit();
+//            currentNode = first_fit(requested);
 //            break;
 //        case Best:
 //            return NULL;
 //        case Worst:
-//            return NULL;
+//            currentNode = worst_fit(requested);
+//            break;
 //        case Next:
 //            return NULL;
 //    }
 
+
+
     if (currentNode == NULL) {return NULL;}
+
 
 
     if ((currentNode->alloc != '1') && (currentNode->size > requested)) {
@@ -147,14 +260,6 @@ void *mymalloc(size_t requested) {
 }
 
 
-
-struct MemoryList* worst_fit(size_t requested) {
-
-
-
-
-}
-
 struct MemoryList* first_fit(size_t requested) {
 
     if (head != NULL) {
@@ -163,7 +268,6 @@ struct MemoryList* first_fit(size_t requested) {
         while (currentNode != NULL) {
 
             if ((currentNode->alloc != '1') && (currentNode->size >= requested)) {
-               // printf("\n %d \n", currentNode->size);
                 return currentNode;
 
             }

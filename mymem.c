@@ -52,16 +52,21 @@ void initmem(strategies strategy, size_t sz) {
     /* all implementations will need an actual block of memory to use */
     mySize = sz;
 
-    if (myMemory != NULL) free(myMemory); /* in case this is not the first time initmem2 is called */
+    if (myMemory != NULL) {                  /* in case this is not the first time initmem2 is called */
+        free(myMemory);
+    }
+
 
     /* TODO: release any other memory you were using for bookkeeping when doing a re-initialization! */
 
     if (head != NULL) {
-        struct MemoryList *trav;
-        for (trav = head; trav->next != NULL; trav = trav->next) {
-            free(trav->previous);
-            free(trav);
-        }
+        free(head);
+
+//        struct MemoryList *trav;
+//        for (trav=head; trav->next!=NULL; trav=trav->next) {
+//            free(trav->previous);
+//            free(trav);
+//        }
     }
 
 
@@ -103,7 +108,6 @@ void *mymalloc(size_t requested) {
 //    }
 
 
-void* pointer;
     if (head != NULL) {
         struct MemoryList *currentNode;
 
@@ -131,17 +135,16 @@ void* pointer;
 
                 currentNode->alloc = '1';
                 currentNode->size = requested;
-                pointer = currentNode->ptr  ;
-                break;
-
+                return currentNode->ptr;
             }
+
             if ((currentNode->alloc != '1') && (currentNode->size == requested)) {
                 currentNode->alloc = '1';
-                pointer = currentNode->ptr;
+               return currentNode->ptr;
             }
         }
     }
-    return pointer;
+    return NULL;
 }
 
 
@@ -152,12 +155,11 @@ void* pointer;
 void myfree(void * block) {
 
     struct MemoryList *trav = head;
-    while (trav != NULL) {
 
+    while (trav != NULL) {
 
         if (trav->ptr == block) {
             trav->alloc = '0';
-
 
             // if previous block is free
             if ( (trav->previous != NULL) && (trav->previous->alloc == '0')) {      // It is not the head and not allocated.

@@ -26,9 +26,9 @@ void do_randomized_test(int strategyToUse, int totalSize, float fillRatio, int m
     int ubound = 4;
     int smallBlockSize = maxBlockSize/10;
 
-    if (maxBlockSize == 3000) {
-        printf("hello %d \n", 2);
-    }
+//    if (maxBlockSize == 3000) {
+//        printf("hello %d \n", 2);
+//    }
     if (strategyToUse>0)
         lbound=ubound=strategyToUse;
 
@@ -90,12 +90,15 @@ void do_randomized_test(int strategyToUse, int totalSize, float fillRatio, int m
                     continue;
 
                 chosen = rand() % storedPointers;
+
+                //printf(" %d ", chosen);
                 pointer = pointers[chosen];
                 pointers[chosen] = pointers[storedPointers-1];
 
                 storedPointers--;
 
-               // myfree(pointer);
+                printf(" %d ", chosen);
+                myfree(pointer);
             }
 
             sum_largest_free += mem_largest_free();
@@ -140,7 +143,7 @@ int do_stress_tests(int argc, char **argv)
     do_randomized_test(strategy,10000,0.25,1000,2000,10000);
 
     do_randomized_test(strategy,10000,0.25,1,3000,10000);
-    printf("\n dlædsaldlds \n");
+   // printf("\n dlædsaldlds \n");
 
 
 // starts from here

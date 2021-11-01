@@ -65,11 +65,11 @@ struct MemoryList* first_fit(size_t requested);
 
 struct MemoryList* worst_fit(size_t requested) {
 
-    if (head == NULL) {return NULL;}
+     if (head == NULL) {return NULL;}
 
     int size = 0;
     struct MemoryList *currentNode = head;
-    struct MemoryList *largestNode;
+    struct MemoryList *largestNode = NULL;
 
 
     while (currentNode != NULL) {
@@ -206,22 +206,22 @@ void initmem(strategies strategy, size_t sz) {
 void *mymalloc(size_t requested) {
 
     assert((int)myStrategy > 0);
-    struct MemoryList *currentNode = worst_fit(requested);
+    struct MemoryList *currentNode = NULL;
 
-//    switch (myStrategy) {
-//        case NotSet:
-//            return NULL;
-//        case First:
-//            currentNode = first_fit(requested);
-//            break;
-//        case Best:
-//            return NULL;
-//        case Worst:
-//            currentNode = worst_fit(requested);
-//            break;
-//        case Next:
-//            return NULL;
-//    }
+    switch (myStrategy) {
+        case NotSet:
+            return NULL;
+        case First:
+            currentNode = first_fit(requested);
+            break;
+        case Best:
+            return NULL;
+        case Worst:
+            currentNode = worst_fit(requested);
+            break;
+        case Next:
+            return NULL;
+    }
 
 
 
@@ -264,7 +264,6 @@ struct MemoryList* first_fit(size_t requested) {
 
     if (head != NULL) {
         struct MemoryList *currentNode = head;
-
         while (currentNode != NULL) {
 
             if ((currentNode->alloc != '1') && (currentNode->size >= requested)) {
@@ -287,7 +286,7 @@ void myfree(void * block) {
 
     while (trav != NULL) {
 
-        if (trav->ptr == block) {
+        if (trav->ptr == block ) {
             trav->alloc = '0';
 
             // if previous block is free
@@ -328,6 +327,11 @@ void myfree(void * block) {
                 break;
             }
         }
+
+        if (trav->next == NULL) {
+         //   printf(" not found ");
+        }
+
         trav = trav->next;
     }
 

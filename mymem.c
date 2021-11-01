@@ -103,7 +103,7 @@ void *mymalloc(size_t requested) {
 //    }
 
 
-
+void* pointer;
     if (head != NULL) {
         struct MemoryList *currentNode;
 
@@ -131,12 +131,17 @@ void *mymalloc(size_t requested) {
 
                 currentNode->alloc = '1';
                 currentNode->size = requested;
-                return currentNode->ptr;
+                pointer = currentNode->ptr  ;
+                break;
 
+            }
+            if ((currentNode->alloc != '1') && (currentNode->size == requested)) {
+                currentNode->alloc = '1';
+                pointer = currentNode->ptr;
             }
         }
     }
-    return NULL;
+    return pointer;
 }
 
 
@@ -297,7 +302,7 @@ int mem_small_free(int size) {
     int counter = 0;
     while (current != NULL) {
         if (current->alloc == '0') {
-            if (current->size < size){
+            if (current->size <= size){
                 counter++;
             }
         }
@@ -307,9 +312,17 @@ int mem_small_free(int size) {
     return counter;
 }
 
-char mem_is_alloc(void *ptr)
-{
-        return 0;
+char mem_is_alloc(void *ptr) {
+    struct MemoryList *currenNode = head;
+    while (currenNode != NULL) {
+        if (currenNode->ptr == ptr) {
+            return currenNode->ptr;
+        }
+        currenNode = currenNode->next;
+    }
+
+
+    return currenNode->alloc;
 }
 
 /* 

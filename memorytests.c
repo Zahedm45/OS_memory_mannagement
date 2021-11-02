@@ -26,9 +26,6 @@ void do_randomized_test(int strategyToUse, int totalSize, float fillRatio, int m
     int ubound = 4;
     int smallBlockSize = maxBlockSize/10;
 
-//    if (maxBlockSize == 3000) {
-//        printf("hello %d \n", 2);
-//    }
     if (strategyToUse>0)
         lbound=ubound=strategyToUse;
 
@@ -38,8 +35,6 @@ void do_randomized_test(int strategyToUse, int totalSize, float fillRatio, int m
         perror("Can't append to log file.\n");
         return;
     }
-
-
 
     fprintf(log,"Running randomized tests: pool size == %d, fill ratio == %f, block size is from %d to %d, %d iterations\n",totalSize,fillRatio,minBlockSize,maxBlockSize,iterations);
 
@@ -90,12 +85,11 @@ void do_randomized_test(int strategyToUse, int totalSize, float fillRatio, int m
                     continue;
 
                 chosen = rand() % storedPointers;
-
-                //printf(" %d ", chosen);
                 pointer = pointers[chosen];
                 pointers[chosen] = pointers[storedPointers-1];
 
                 storedPointers--;
+
                 myfree(pointer);
             }
 
@@ -132,25 +126,13 @@ int do_stress_tests(int argc, char **argv)
     int strategy = strategyFromString(*(argv+1));
 
     unlink("tests.log");  // We want a new log file
+
     do_randomized_test(strategy,10000,0.25,1,1000,10000);
     do_randomized_test(strategy,10000,0.25,1,2000,10000);
-
-
-
-
     do_randomized_test(strategy,10000,0.25,1000,2000,10000);
-
     do_randomized_test(strategy,10000,0.25,1,3000,10000);
-   // printf("\n dlædsaldlds \n");
-
-
-// starts from here
-
     do_randomized_test(strategy,10000,0.25,1,4000,10000);
-
-
     do_randomized_test(strategy,10000,0.25,1,5000,10000);
-
 
     do_randomized_test(strategy,10000,0.5,1,1000,10000);
     do_randomized_test(strategy,10000,0.5,1,2000,10000);
@@ -191,18 +173,13 @@ int test_alloc_1(int argc, char **argv) {
         for (i = 0; i < 100; i++)
         {
             void* pointer = mymalloc(1);
-
             if ( i > 0 && pointer != (lastPointer+1) )
             {
-
                 printf("Allocation with %s was not sequential at %i; expected %p, actual %p\n", strategy_name(strategy), i,lastPointer+1,pointer);
                 return 1;
             }
             lastPointer = pointer;
-
         }
-
-
 
         if (mem_holes() != correct_holes)
         {

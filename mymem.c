@@ -94,13 +94,14 @@ void initmem(strategies strategy, size_t sz) {
     /* TODO: release any other memory you were using for bookkeeping when doing a re-initialization! */
 
     if (head != NULL) {
-        free(head);
 
 //        struct MemoryList *trav;
 //        for (trav=head; trav->next!=NULL; trav=trav->next) {
 //            free(trav->previous);
 //            free(trav);
 //        }
+        free(head);
+
     }
 
 

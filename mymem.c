@@ -227,13 +227,17 @@ struct MemoryList* worst_fit(size_t requested) {
                 largestNode = currentNode;
                 size = currentNode->size;
             }
-
-
         }
         currentNode = currentNode->next;
     }
-
     return largestNode;
+}
+
+
+
+struct MemoryList *best_fit(size_t requested) {
+
+
 }
 
 

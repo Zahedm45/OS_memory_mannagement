@@ -36,51 +36,6 @@ struct MemoryList* first_fit(size_t requested);
 struct MemoryList *next_fit(size_t requested);
 
 
-
-
-//struct MemoryList* worst_fit(size_t requested) {
-//
-//    if (head == NULL) {return NULL;}
-//
-//    int size = 0;
-//    struct MemoryList *currentNode = head;
-//    struct MemoryList *largestNode;
-//
-//
-//    while (currentNode != NULL) {
-//        if ((currentNode->alloc != '1') && (currentNode->size > requested)) {
-//
-//            if ( (currentNode->size > size) ) {
-//                largestNode = currentNode;
-//                size = currentNode->size;
-//
-//            }
-//
-//
-//        }
-//        currentNode = currentNode->next;
-//    }
-//
-//    return largestNode;
-//}
-
-
-
-
-/* initmem must be called prior to mymalloc and myfree.
-
-   initmem may be called more than once in a given exeuction;
-   when this occurs, all memory you previously malloc'ed  *must* be freed,
-   including any existing bookkeeping data.
-
-   strategy must be one of the following:
-		- "best" (best-fit)
-		- "worst" (worst-fit)
-		- "first" (first-fit)
-		- "next" (next-fit)
-   sz specifies the number of bytes that will be available, in total, for all mymalloc requests.
-*/
-
 void initmem(strategies strategy, size_t sz) {
     myStrategy = strategy;
 
@@ -117,11 +72,6 @@ void initmem(strategies strategy, size_t sz) {
             }
         }
 
-
-//        if (next != NULL) {
-//            free(next);
-//        }
-
     }
 
 
@@ -148,8 +98,6 @@ void initmem(strategies strategy, size_t sz) {
 
 void *mymalloc(size_t requested) {
 
-  //  printf(" hello \n");
-
     assert((int)myStrategy > 0);
     struct MemoryList *currentNode = NULL;
 
@@ -170,7 +118,7 @@ void *mymalloc(size_t requested) {
 
 
     if (currentNode == NULL) {return NULL;}
-  //  printf(" hello2 \n");
+
 
 
     // next = currentNode;
@@ -255,7 +203,6 @@ struct MemoryList *next_fit(size_t requested) {
 
     if ((next == NULL) && (head == NULL)) return NULL;
 
-   // printf(" hello \n");
     struct MemoryList *crrNode = next;
     while (crrNode != NULL) {
         if ((crrNode->alloc != '1') && (crrNode->size >= requested) ) {
@@ -264,17 +211,13 @@ struct MemoryList *next_fit(size_t requested) {
         crrNode = crrNode->next;
     }
 
-
- //   printf(" hello2 \n");
     struct MemoryList *crrNode2 = head;
-
     while (crrNode2 != next) {
         if ((crrNode2->alloc != '1') && (crrNode2->size >= requested) ) {
             return crrNode2;
         }
         crrNode2 = crrNode2->next;
     }
-
     return NULL;
 }
 
@@ -285,9 +228,7 @@ struct MemoryList *next_fit(size_t requested) {
 void myfree(void * block) {
 
     struct MemoryList *trav = head;
-
     while (trav != NULL) {
-
         if (trav->ptr == block ) {
             trav->alloc = '0';
 
@@ -302,8 +243,6 @@ void myfree(void * block) {
                     trav =trav->previous;                                       // goes back to the previous iteration
                     if (temp == next) next = trav;
                     free(temp);
-
-
                 }
             }
 
@@ -318,7 +257,6 @@ void myfree(void * block) {
                     if (temp == next) next = temp->next;
                     free(temp);
                     break;
-
                 }
 
                 if (temp->previous == NULL){
@@ -332,8 +270,6 @@ void myfree(void * block) {
                 break;
             }
         }
-
-
         trav = trav->next;
     }
 
@@ -361,7 +297,6 @@ int mem_holes() {
         if (curr->alloc == '0') {
             counter++;
         }
-
         curr = curr->next;
     }
 
@@ -457,8 +392,6 @@ char mem_is_alloc(void *ptr) {
         }
         currenNode = currenNode->next;
     }
-
-
     return currenNode->alloc;
 }
 

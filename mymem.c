@@ -219,7 +219,7 @@ struct MemoryList* best_fit(size_t requested) {
     int size = mySize;
     struct MemoryList *mostSuitableNode = NULL;
 
-    // While loop to find most suitable memory block that is free
+    // While-loop to find the most suitable memory block that is free
     while (currentNode != NULL) {
         if ((currentNode->alloc != '1') && (currentNode->size >= requested)){
 

@@ -37,7 +37,6 @@ struct MemoryList* best_fit(size_t requested);
 
 
 
-
 //struct MemoryList* worst_fit(size_t requested) {
 //
 //    if (head == NULL) {return NULL;}
@@ -151,7 +150,7 @@ void *mymalloc(size_t requested) {
             break;
         case Best:
             currentNode = best_fit(requested);
-            return NULL;
+            break;
         case Worst:
             currentNode = worst_fit(requested);
             break;
@@ -238,42 +237,34 @@ struct MemoryList* worst_fit(size_t requested) {
     return largestNode;
 }
 
+
 struct MemoryList* best_fit(size_t requested) {
 
     if (head == NULL) {return NULL;}
 
-    int size =0;
     struct MemoryList *currentNode = head;
+    int size = mySize;
     struct MemoryList *mostSuitableNode = NULL;
-
-    // While loop to find largest memory block
-    while(currentNode) {
-        if (currentNode->alloc != '1' && currentNode->size > size) {
-            size = currentNode->size;
-        }
-        currentNode = currentNode->next;
-
-    }
-    // Resitting currentNode
-    currentNode = head;
 
     // While loop to find most suitable memory block that is free
     while (currentNode != NULL) {
         if ((currentNode->alloc != '1') && (currentNode->size >= requested)){
 
-            if (currentNode->size < size){
+            if (currentNode->size == requested) {
+                return currentNode;
+            }
+
+            if (currentNode->size <= size){
                 mostSuitableNode = currentNode;
                 size = currentNode->size;
             }
         }
         currentNode = currentNode->next;
     }
-
     return mostSuitableNode;
-
-
-
 }
+
+
 
 
 /* Frees a block of memory previously allocated by mymalloc. */

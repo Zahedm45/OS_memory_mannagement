@@ -244,12 +244,17 @@ void myfree(void * block) {
         if (trav->ptr == block ) {
             trav->alloc = '0';
 
-            // if previous block is free
-            if ( (trav->previous != NULL) && (trav->previous->alloc == '0')) {      // It is not the head and not allocated.
+
+            /* First of all, trav is like the current block/node of the while-loop. So, inside the if statement we check if
+             * the current block's previous block is not the head, and is also not allocated(free block). If these statements
+             * are true then we remove the current/trav block and if previous block or next block is free then we reduce to
+             * one block by extending the size of the free block.
+             * */
+            if ((trav->previous != NULL) && (trav->previous->alloc == '0')) {
                 trav->previous->size += trav->size;                                 // two empty memory blocks become one block
 
                 struct MemoryList *temp = trav;
-                if (temp->next != NULL) {                                       // not tail
+                if (temp->next != NULL) {                                       // not the tail
                     temp->previous->next = temp->next;
                     temp->next->previous = temp->previous;
                     trav =trav->previous;                                       // goes back to the previous iteration
@@ -258,7 +263,7 @@ void myfree(void * block) {
                 }
             }
 
-            // if next block is also free, become one block
+            // if next block is also free, becomes one block
             if ((trav->next != NULL) && (trav->next->alloc == '0') ) {
                 trav->next->size += trav->size;
 

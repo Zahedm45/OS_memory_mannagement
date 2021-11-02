@@ -34,6 +34,7 @@ static struct MemoryList *next = NULL;
 struct MemoryList* worst_fit(size_t requested);
 struct MemoryList* first_fit(size_t requested);
 struct MemoryList *next_fit(size_t requested);
+struct MemoryList* best_fit(size_t requested);
 
 
 void initmem(strategies strategy, size_t sz) {
@@ -108,7 +109,8 @@ void *mymalloc(size_t requested) {
             currentNode = first_fit(requested);
             break;
         case Best:
-            return NULL;
+            currentNode = best_fit(requested);
+            break;
         case Worst:
             currentNode = worst_fit(requested);
             break;
@@ -207,6 +209,34 @@ struct MemoryList* worst_fit(size_t requested) {
     }
     return largestNode;
 }
+
+
+struct MemoryList* best_fit(size_t requested) {
+
+    if (head == NULL) {return NULL;}
+
+    struct MemoryList *currentNode = head;
+    int size = mySize;
+    struct MemoryList *mostSuitableNode = NULL;
+
+    // While loop to find most suitable memory block that is free
+    while (currentNode != NULL) {
+        if ((currentNode->alloc != '1') && (currentNode->size >= requested)){
+
+            if (currentNode->size == requested) {
+                return currentNode;
+            }
+
+            if (currentNode->size <= size){
+                mostSuitableNode = currentNode;
+                size = currentNode->size;
+            }
+        }
+        currentNode = currentNode->next;
+    }
+    return mostSuitableNode;
+}
+
 
 
 

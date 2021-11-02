@@ -175,6 +175,7 @@ int test_alloc_1(int argc, char **argv) {
             void* pointer = mymalloc(1);
             if ( i > 0 && pointer != (lastPointer+1) )
             {
+                printf(" hellooo %d \n", i);
                 printf("Allocation with %s was not sequential at %i; expected %p, actual %p\n", strategy_name(strategy), i,lastPointer+1,pointer);
                 return 1;
             }

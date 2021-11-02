@@ -99,6 +99,7 @@ void initmem(strategies strategy, size_t sz) {
 void *mymalloc(size_t requested) {
 
     assert((int)myStrategy > 0);
+    // currentNode is the memory block that has to be allocated.
     struct MemoryList *currentNode = NULL;
 
     switch (myStrategy) {
@@ -120,31 +121,42 @@ void *mymalloc(size_t requested) {
     if (currentNode == NULL) {return NULL;}
 
 
-
-    // next = currentNode;
     if ((currentNode->alloc != '1') && (currentNode->size > requested)) {
+        // here restMem is a new, which represents the rest of the memory
         struct MemoryList *restMem =(struct MemoryList*)malloc(sizeof(struct MemoryList));
-
         restMem->size = currentNode->size - requested;
         restMem->alloc = '0';
         restMem->ptr = currentNode->ptr + requested;
 
 
-        // tail
+        // currentNode(block to be allocated) is the tail.
         if (currentNode->next == NULL) {
-            restMem->next = NULL;
+            restMem->next = NULL;                                       //  at the tail
 
         } else {
+            // [restMem]->[crrNode's next]  sets the new block's next to the current block's next
             restMem->next = currentNode->next;
+            //  [restMem]<-[crrNode's next]  sets the new block as current block-next's previous.
             currentNode->next->previous = restMem;
         }
 
+        /* So right above we connect the new block's right side to the current block's next block.
+         * and if the current block is the tail then the next block will be NULL.
+         *
+         * The code just right below connects the new block's left side to the current block.
+         * The main aim is to connect the new block's right side first and then the left side, so in the end
+         * the new block becomes a part of the nodes.
+         * */
+
+        // [crrNode]->[restMem]   sets the current block's next to the new block
         currentNode->next = restMem;
+        // [crrNode]<-[restMem]     sets the new block't previous to the current block
         restMem->previous = currentNode;
 
         currentNode->alloc = '1';
         currentNode->size = requested;
-         next = currentNode->next;
+        // next is a pointer to the last allocated block's next block, used in next-fit algorithm
+        next = currentNode->next;
         return currentNode->ptr;
 
     } else  {

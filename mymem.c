@@ -28,7 +28,7 @@ strategies myStrategy = NotSet;    // Current strategy
 size_t mySize;
 void *myMemory = NULL;
 
-static struct MemoryList *head;
+static struct MemoryList *head = NULL;
 static struct MemoryList *next;
 
 struct MemoryList* worst_fit(size_t requested);
@@ -95,12 +95,24 @@ void initmem(strategies strategy, size_t sz) {
 
     if (head != NULL) {
 
-//        struct MemoryList *trav;
-//        for (trav=head; trav->next!=NULL; trav=trav->next) {
+        struct MemoryList *prevNode = head;
+        struct MemoryList *crrNode = head->next;
+
+        while (prevNode != NULL && crrNode != NULL)
+        {
+            prevNode->next = crrNode->next;
+            free(crrNode);
+            prevNode = prevNode->next;
+            if (prevNode != NULL)
+                crrNode = prevNode->next;
+        }
+
+        // This is what guideline suggested but it doesn't seems to work
+
+//        for (trav=head; trav.next != NULL; trav=trav->next) {
 //            free(trav->previous);
 //            free(trav);
 //        }
-        free(head);
 
     }
 
@@ -125,62 +137,6 @@ void initmem(strategies strategy, size_t sz) {
  *  Restriction: requested >= 1 
  */
 
-//void *mymalloc(size_t requested) {
-//
-//    assert((int)myStrategy > 0);
-//    struct MemoryList *currentNode = worst_fit(requested);
-//
-////    switch (myStrategy) {
-////        case NotSet:
-////            return NULL;
-////        case First:
-////            currentNode = first_fit(requested);
-////            break;
-////        case Best:
-////            return NULL;
-////        case Worst:
-////            currentNode = worst_fit(requested);
-////            break;
-////        case Next:
-////            return NULL;
-////    }
-//
-//
-//
-//    if (currentNode == NULL) {return NULL;}
-//
-//
-//
-//    if ((currentNode->alloc != '1') && (currentNode->size > requested)) {
-//        struct MemoryList *restMem =(struct MemoryList*)malloc(sizeof(struct MemoryList));
-//
-//        restMem->size = currentNode->size - requested;
-//        restMem->alloc = '0';
-//        restMem->ptr = currentNode->ptr + requested;
-//
-//        // tail
-//        if (currentNode->next == NULL) {
-//            restMem->next = NULL;
-//
-//        } else {
-//            restMem->next = currentNode->next;
-//            currentNode->next->previous = restMem;
-//        }
-//
-//        currentNode->next = restMem;
-//        restMem->previous = currentNode;
-//
-//        currentNode->alloc = '1';
-//        currentNode->size = requested;
-//        return currentNode->ptr;
-//
-//    } else  {
-//        currentNode->alloc = '1';
-//        return currentNode->ptr;
-//    }
-//    return NULL;
-//}
-
 void *mymalloc(size_t requested) {
 
     assert((int)myStrategy > 0);
@@ -202,9 +158,7 @@ void *mymalloc(size_t requested) {
     }
 
 
-
     if (currentNode == NULL) {return NULL;}
-
 
 
     if ((currentNode->alloc != '1') && (currentNode->size > requested)) {
@@ -234,8 +188,9 @@ void *mymalloc(size_t requested) {
         currentNode->alloc = '1';
         return currentNode->ptr;
     }
-    return NULL;
 }
+
+
 
 
 struct MemoryList* first_fit(size_t requested) {
@@ -253,6 +208,8 @@ struct MemoryList* first_fit(size_t requested) {
     }
     return NULL;
 }
+
+
 
 struct MemoryList* worst_fit(size_t requested) {
 
@@ -300,7 +257,7 @@ void myfree(void * block) {
                 if (temp->next != NULL) {                                       // not tail
                     temp->previous->next = temp->next;
                     temp->next->previous = temp->previous;
-                    trav =trav->previous;
+                    trav =trav->previous;                                       // goes back to the previous iteration
                     free(temp);
 
 

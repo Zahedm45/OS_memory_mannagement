@@ -52,7 +52,7 @@ void initmem(strategies strategy, size_t sz) {
 
     if (head != NULL) {
 
-        // This is what guideline suggested but it doesn't seems to work
+        // This is what the guideline suggested but it doesn't seems to work
 
 //        for (trav=head; trav.next != NULL; trav=trav->next) {
 //            free(trav->previous);
@@ -71,7 +71,6 @@ void initmem(strategies strategy, size_t sz) {
                 crrNode = prevNode->next;
             }
         }
-
     }
 
 
@@ -122,7 +121,7 @@ void *mymalloc(size_t requested) {
 
 
     if ((currentNode->alloc != '1') && (currentNode->size > requested)) {
-        // here restMem is a new, which represents the rest of the memory
+        // here restMem is a new block, which represents the rest of the memory
         struct MemoryList *restMem =(struct MemoryList*)malloc(sizeof(struct MemoryList));
         restMem->size = currentNode->size - requested;
         restMem->alloc = '0';

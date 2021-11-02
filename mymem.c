@@ -29,10 +29,11 @@ size_t mySize;
 void *myMemory = NULL;
 
 static struct MemoryList *head = NULL;
-static struct MemoryList *next;
+static struct MemoryList *next = NULL;
 
 struct MemoryList* worst_fit(size_t requested);
 struct MemoryList* first_fit(size_t requested);
+struct MemoryList *next_fit(size_t requested);
 
 
 
@@ -91,9 +92,17 @@ void initmem(strategies strategy, size_t sz) {
     }
 
 
+
     /* TODO: release any other memory you were using for bookkeeping when doing a re-initialization! */
 
     if (head != NULL) {
+
+        // This is what guideline suggested but it doesn't seems to work
+
+//        for (trav=head; trav.next != NULL; trav=trav->next) {
+//            free(trav->previous);
+//            free(trav);
+//        }
 
         struct MemoryList *prevNode = head;
         struct MemoryList *crrNode = head->next;
@@ -103,15 +112,14 @@ void initmem(strategies strategy, size_t sz) {
             prevNode->next = crrNode->next;
             free(crrNode);
             prevNode = prevNode->next;
-            if (prevNode != NULL)
+            if (prevNode != NULL) {
                 crrNode = prevNode->next;
+            }
         }
 
-        // This is what guideline suggested but it doesn't seems to work
 
-//        for (trav=head; trav.next != NULL; trav=trav->next) {
-//            free(trav->previous);
-//            free(trav);
+//        if (next != NULL) {
+//            free(next);
 //        }
 
     }
@@ -127,6 +135,7 @@ void initmem(strategies strategy, size_t sz) {
     head->size = sz;
     head->alloc = '0';
     head->ptr = myMemory;
+    next = head;
 
 }
 
@@ -138,6 +147,8 @@ void initmem(strategies strategy, size_t sz) {
  */
 
 void *mymalloc(size_t requested) {
+
+  //  printf(" hello \n");
 
     assert((int)myStrategy > 0);
     struct MemoryList *currentNode = NULL;
@@ -154,19 +165,22 @@ void *mymalloc(size_t requested) {
             currentNode = worst_fit(requested);
             break;
         case Next:
-            return NULL;
+            currentNode = next_fit(requested);
     }
 
 
     if (currentNode == NULL) {return NULL;}
+  //  printf(" hello2 \n");
 
 
+    // next = currentNode;
     if ((currentNode->alloc != '1') && (currentNode->size > requested)) {
         struct MemoryList *restMem =(struct MemoryList*)malloc(sizeof(struct MemoryList));
 
         restMem->size = currentNode->size - requested;
         restMem->alloc = '0';
         restMem->ptr = currentNode->ptr + requested;
+
 
         // tail
         if (currentNode->next == NULL) {
@@ -182,10 +196,12 @@ void *mymalloc(size_t requested) {
 
         currentNode->alloc = '1';
         currentNode->size = requested;
+         next = currentNode->next;
         return currentNode->ptr;
 
     } else  {
         currentNode->alloc = '1';
+        next = currentNode->next;
         return currentNode->ptr;
     }
 }
@@ -235,9 +251,31 @@ struct MemoryList* worst_fit(size_t requested) {
 
 
 
-struct MemoryList *best_fit(size_t requested) {
+struct MemoryList *next_fit(size_t requested) {
+
+    if ((next == NULL) && (head == NULL)) return NULL;
+
+   // printf(" hello \n");
+    struct MemoryList *crrNode = next;
+    while (crrNode != NULL) {
+        if ((crrNode->alloc != '1') && (crrNode->size >= requested) ) {
+            return crrNode;
+        }
+        crrNode = crrNode->next;
+    }
 
 
+ //   printf(" hello2 \n");
+    struct MemoryList *crrNode2 = head;
+
+    while (crrNode2 != next) {
+        if ((crrNode2->alloc != '1') && (crrNode2->size >= requested) ) {
+            return crrNode2;
+        }
+        crrNode2 = crrNode2->next;
+    }
+
+    return NULL;
 }
 
 
@@ -262,6 +300,7 @@ void myfree(void * block) {
                     temp->previous->next = temp->next;
                     temp->next->previous = temp->previous;
                     trav =trav->previous;                                       // goes back to the previous iteration
+                    if (temp == next) next = trav;
                     free(temp);
 
 
@@ -276,6 +315,7 @@ void myfree(void * block) {
                 if (temp->previous != NULL) {
                     temp->previous->next = temp->next;
                     temp->next->previous = temp->previous;
+                    if (temp == next) next = temp->next;
                     free(temp);
                     break;
 
@@ -283,6 +323,7 @@ void myfree(void * block) {
 
                 if (temp->previous == NULL){
                     head = temp->next;
+                    next = head;
                     head->previous = NULL;
                     free(temp);
                     break;
@@ -292,9 +333,6 @@ void myfree(void * block) {
             }
         }
 
-        if (trav->next == NULL) {
-         //   printf(" not found ");
-        }
 
         trav = trav->next;
     }
@@ -415,7 +453,7 @@ char mem_is_alloc(void *ptr) {
     struct MemoryList *currenNode = head;
     while (currenNode != NULL) {
         if (currenNode->ptr == ptr) {
-            return currenNode->ptr;
+            return currenNode->alloc;
         }
         currenNode = currenNode->next;
     }

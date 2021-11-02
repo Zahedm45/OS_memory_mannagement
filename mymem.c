@@ -107,7 +107,7 @@ void initmem(strategies strategy, size_t sz) {
                 crrNode = prevNode->next;
         }
 
-        // This is what guideline suggested but it doesn't seems to work
+        // This is what guideline suggested, but it doesn't seem to work.
 
 //        for (trav=head; trav.next != NULL; trav=trav->next) {
 //            free(trav->previous);

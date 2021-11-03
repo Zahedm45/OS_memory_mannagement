@@ -53,7 +53,7 @@ void initmem(strategies strategy, size_t sz) {
 
     if (head != NULL) {
 
-        // This is what the guideline suggested but it doesn't seems to work
+        // This is what the guideline suggested but it doesn't seem to work
 
 //        for (trav=head; trav.next != NULL; trav=trav->next) {
 //            free(trav->previous);
@@ -63,8 +63,7 @@ void initmem(strategies strategy, size_t sz) {
         struct MemoryList *prevNode = head;
         struct MemoryList *crrNode = head->next;
 
-        while (prevNode != NULL && crrNode != NULL)
-        {
+        while (prevNode != NULL && crrNode != NULL) {
             prevNode->next = crrNode->next;
             free(crrNode);
             prevNode = prevNode->next;
@@ -151,7 +150,7 @@ void *mymalloc(size_t requested) {
 
         // [crrNode]->[restMem]   sets the current block's next to the new block
         currentNode->next = restMem;
-        // [crrNode]<-[restMem]     sets the new block't previous to the current block
+        // [crrNode]<-[restMem]     sets the new block's previous to the current block
         restMem->previous = currentNode;
 
         currentNode->alloc = '1';
@@ -511,8 +510,6 @@ strategies strategyFromString(char * strategy)
 
 /* Use this function to print out the current contents of memory. */
 void print_memory() {
-
-
     struct MemoryList *temp = head;
 
     if (head == NULL){

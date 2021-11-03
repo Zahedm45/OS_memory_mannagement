@@ -48,7 +48,6 @@ void initmem(strategies strategy, size_t sz) {
     }
 
 
-
     /* TODO: release any other memory you were using for bookkeeping when doing a re-initialization! */
 
     if (head != NULL) {
@@ -122,7 +121,7 @@ void *mymalloc(size_t requested) {
 
 
     if ((currentNode->alloc != '1') && (currentNode->size > requested)) {
-        // here restMem is a new block, which represents the rest of the memory
+        // here restMem is a new block, which represents the rest of the memory after the allocation
         struct MemoryList *restMem =(struct MemoryList*)malloc(sizeof(struct MemoryList));
         restMem->size = currentNode->size - requested;
         restMem->alloc = '0';
@@ -274,9 +273,9 @@ void myfree(void * block) {
 
 
             /* First of all, trav is like the current block/node of the while-loop. So, inside the if statement we check if
-             * the current block's previous block is not the head, and is also not allocated(free block). If these statements
+             * the current block's previous block is not the head, and it is also not allocated(free block). If these two statements
              * are true then we remove the current/trav block and if previous block or next block is free then we reduce to
-             * one block by extending the size of the free block.
+             * one large block by extending the size of the free block.
              * */
             if ((trav->previous != NULL) && (trav->previous->alloc == '0')) {
                 trav->previous->size += trav->size;                                 // two empty memory blocks become one block
